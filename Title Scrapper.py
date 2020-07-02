@@ -7,7 +7,7 @@ keywords=[]
 with open("Subreddits.txt", "r") as f:
     # add all subreddits from text file to filter
     for subreddit in f:
-        subreddits.append(subreddit.strip())
+        subreddits.append(subreddit.strip().lower())
 
 with open("Keyword.txt", "r") as f:
     # add all subreddits from text file to filter
@@ -19,26 +19,44 @@ print(keywords)
 # Bot1 settings is selected from praw.ini
 reddit = praw.Reddit("Bot1", config_interpolation="basic")
 
-    # for subreddit_name in subreddits:
-    #     subreddit=reddit.subreddit(subreddit_name)
-    #     for comment in subreddit.stream.comments(pause_after=1):
-    #         for keyword in keywords:
-    #              if keyword in comment.body:
-    #                 print(f"{keyword}\n\n{comment.body}")
-    #                 time.sleep(1)
-    #                 break
-            
-for subreddit_name in subreddits:
-    subreddit=reddit.subreddit(subreddit_name)
-    for keyword in keywords:
-        for submission in subreddit.stream.submissions(pause_after=1):
-            if submission==None:
-                break
-                
-            if keyword in submission.title:
-               print(f"{keyword}\n\n{submission.title}")
-               time.sleep(1)
-               break
         
-print(f"This is the subreddit title: {subreddit.title}")
-    
+subreddit_name="+".join(subreddits)
+print(subreddit_name)
+
+subreddit=reddit.subreddit(subreddit_name)
+counter=0
+for submission in subreddit.stream.submissions():
+    for keyword in keywords:
+        if submission==None:
+            # print(None)
+            # time.sleep(1)
+            break
+            
+        elif keyword in submission.title:
+            print(f"{keyword}\n\n{submission.title}")
+            time.sleep(1)
+            break
+       
+        else:
+            # # print("Keyword Not Found")
+            # time.sleep(1)
+            break
+    counter+=1
+    print(counter)
+
+for comment in subreddit.stream.comments():
+    for keyword in keywords:
+        if comment==None:
+            print(None)
+            time.sleep(1)
+            break
+            
+        elif keyword in comment.body:
+            print(f"{keyword}\n\n{comment.body}")
+            time.sleep(1)
+            break
+       
+        else:
+            print("Keyword Not Found")
+            time.sleep(1)
+            break
